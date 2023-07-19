@@ -79,3 +79,31 @@ app.put('/api/entries', async (req, res, next) => {
     next(err);
   }
 });
+
+app.delete('/api/entries/:entryId', async (req, res, next) => {
+  try {
+    const deleteId = Number(req.params.entryId);
+    if (!Number.isInteger(deleteId) || deleteId < 0) {
+      throw new ClientError(400, 'id must be a positive integer');
+    }
+    const sql = `
+            delete
+              from "entries"
+              where "entryId" = $1
+              returning *;
+          `;
+    const params = [deleteId];
+    const result = await db.query(sql, params);
+    const deletedEntry = result.rows[0];
+    if (deletedEntry) {
+      res.sendStatus(204);
+    } else {
+      throw new ClientError(
+        404,
+        `Cannot find entry with 'entryId' ${deleteId}`
+      );
+    }
+  } catch (err) {
+    next(err);
+  }
+});

@@ -74,9 +74,21 @@ export async function updateEntry(entry) {
   }
 }
 
-export function removeEntry(entryId) {
-  const updatedArray = data.entries.filter(
-    (entry) => entry.entryId !== entryId
-  );
-  data.entries = updatedArray;
+export async function removeEntry(entryId) {
+  try {
+    const reqConfig = {
+      method: 'DELETE',
+    };
+    const res = await fetch(`/api/entries/${entryId}`, reqConfig);
+    if (!res.ok) {
+      throw new Error(`Error status ${res.status}`);
+    }
+    const allTodos = await fetch('/api/entries');
+    if (!allTodos.ok) {
+      throw new Error(`Error reading entries: status ${res.status}`);
+    }
+    data.entries = res.json(allTodos);
+  } catch (error) {
+    console.log(error.message);
+  }
 }
