@@ -1,13 +1,11 @@
 import { readEntries } from './data';
 import { useEffect, useState } from 'react';
 
-export default function EntryList({ onCreate, onEdit }) {
-  const [entries, setEntries] = useState([]);
-
+export default function EntryList({ onCreate, onEdit, entries, setEntries }) {
   useEffect(() => {
     async function getEntries() {
-      const entries = await readEntries();
-      setEntries(entries);
+      const awaitEntries = await readEntries();
+      setEntries(awaitEntries);
     }
     getEntries();
   }, []);

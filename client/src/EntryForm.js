@@ -16,7 +16,7 @@ export default function EntryForm({ entry, onSubmit }) {
     event.preventDefault();
     const newEntry = { title, photoUrl, notes };
     if (entry) {
-      updateEntry({ ...entry, ...newEntry });
+      updateEntry(newEntry);
     } else {
       addEntry(newEntry);
     }

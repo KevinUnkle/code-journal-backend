@@ -51,11 +51,27 @@ export async function addEntry(entry) {
   }
 }
 
-export function updateEntry(entry) {
-  const newEntries = data.entries.map((e) =>
-    e.entryId === entry.entryId ? entry : e
-  );
-  data.entries = newEntries;
+export async function updateEntry(entry) {
+  try {
+    const reqConfig = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(entry),
+    };
+    const res = await fetch(`/api/entries`, reqConfig);
+    if (!res.ok) {
+      throw new Error(`Error status ${res.status}`);
+    }
+    const allTodos = await fetch('/api/entries');
+    if (!allTodos.ok) {
+      throw new Error(`Error reading entries: status ${res.status}`);
+    }
+    data.entries = res.json(allTodos);
+  } catch (error) {
+    console.log(error.message);
+  }
 }
 
 export function removeEntry(entryId) {

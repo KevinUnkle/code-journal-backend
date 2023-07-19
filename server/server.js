@@ -52,3 +52,30 @@ app.post('/api/entries', async (req, res, next) => {
     next(err);
   }
 });
+
+app.put('/api/entries', async (req, res, next) => {
+  try {
+    const { title, notes, photoUrl, entryId } = req.body;
+    if (!title || !notes || !photoUrl) {
+      throw new ClientError(400, 'title, notes, photo URL required');
+    }
+    const sql = `
+            update "entries"
+              set  "title" = $1,
+                  "notes" = $2,
+                  "photoUrl" = $3
+              where "entryId" = $4
+              returning *;
+          `;
+    const params = [title, notes, photoUrl, entryId];
+    const result = await db.query(sql, params);
+    const entry = result.rows[0];
+    if (entry) {
+      res.status(200).json(entry);
+    } else {
+      throw new ClientError(404, `Cannot find entry with 'entryId' ${entryId}`);
+    }
+  } catch (err) {
+    next(err);
+  }
+});
