@@ -1,7 +1,17 @@
 import { readEntries } from './data';
+import { useEffect, useState } from 'react';
 
 export default function EntryList({ onCreate, onEdit }) {
-  const entries = readEntries();
+  const [entries, setEntries] = useState([]);
+
+  useEffect(() => {
+    async function getEntries() {
+      const entries = await readEntries();
+      setEntries(entries);
+    }
+    getEntries();
+  }, []);
+
   return (
     <div className="container">
       <div className="row">
