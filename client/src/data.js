@@ -92,3 +92,5 @@ export async function removeEntry(entryId) {
     console.log(error.message);
   }
 }
+
+// export async function removeEntry(entryId) {
